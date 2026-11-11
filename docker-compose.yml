@@ -1,0 +1,17 @@
+# Run this service on its own (with its own database) for local development:
+#   docker compose up --build
+services:
+  restaurant-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: restaurant_db
+      POSTGRES_USER: restaurant
+      POSTGRES_PASSWORD: restaurant
+    ports: ["5433:5432"]
+  restaurant-service:
+    build: .
+    environment:
+      DATABASE_URL: postgresql+psycopg://restaurant:restaurant@restaurant-db:5432/restaurant_db
+      SEED_DATA: "true"
+    ports: ["8001:8001"]
+    depends_on: [restaurant-db]
